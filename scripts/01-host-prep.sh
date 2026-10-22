@@ -16,6 +16,16 @@ if systemctl is-active --quiet firewalld; then
   sudo firewall-cmd --reload >/dev/null
 fi
 
+# --- /etc/hosts: some routers drop 127.0.0.1 answers for *.localtest.me
+# (DNS-rebinding protection), which breaks the browser and the apiserver's OIDC.
+log "Pinning *.localtest.me hostnames to 127.0.0.1 in /etc/hosts"
+sudo sed -i '/# k3s-gitops begin/,/# k3s-gitops end/d' /etc/hosts
+sudo tee -a /etc/hosts >/dev/null <<'EOF'
+# k3s-gitops begin
+127.0.0.1 argocd.localtest.me keycloak.localtest.me headlamp.localtest.me
+# k3s-gitops end
+EOF
+
 # --- Root CA (never committed; key stays in ~/.k3s-gitops/ca)
 mkdir -p "${CA_DIR}"
 chmod 700 "${STATE_DIR}" "${CA_DIR}"

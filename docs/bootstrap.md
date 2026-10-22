@@ -6,12 +6,16 @@ existing `~/.kube/config` is not touched.
 
 1. **Host prep**: `./scripts/01-host-prep.sh`
    - firewalld: trusts 10.42.0.0/16 (pods) and 10.43.0.0/16 (services), opens 80/443/6443
+   - pins `argocd|keycloak|headlamp.localtest.me` to 127.0.0.1 in `/etc/hosts`
+     (some routers drop 127.0.0.1 DNS answers as rebinding protection)
    - creates the root CA in `~/.k3s-gitops/ca/` and adds it to the system trust store
    - installs `kubeseal`
    - Firefox uses its own trust store: import `~/.k3s-gitops/ca/ca.crt` there
      (Settings → Certificates → Authorities) or enable `security.enterprise_roots.enabled`.
 2. **k3s**: `./scripts/02-install-k3s.sh` installs the pinned k3s with
-   [`k3s/config.yaml`](../k3s/config.yaml) (apiserver OIDC flags).
+   [`k3s/config.yaml`](../k3s/config.yaml) (apiserver OIDC flags) and
+   [`k3s/resolv.conf`](../k3s/resolv.conf) (public upstream DNS for CoreDNS, so
+   VPN/corporate resolvers on the host don't break pod DNS).
 3. **ArgoCD**: `./scripts/03-bootstrap-argocd.sh` loads the CA into the cluster,
    installs ArgoCD with Helm, applies `bootstrap/root-app.yaml`.
    ArgoCD now syncs `apps/` by sync wave.
