@@ -8,6 +8,7 @@ need curl
 log "Writing /etc/rancher/k3s/config.yaml and OIDC CA"
 sudo mkdir -p /etc/rancher/k3s
 sudo install -m 0644 "${REPO_ROOT}/k3s/config.yaml" /etc/rancher/k3s/config.yaml
+sudo install -m 0644 "${REPO_ROOT}/k3s/resolv.conf" /etc/rancher/k3s/resolv.conf
 sudo install -m 0644 "${CA_DIR}/ca.crt" /etc/rancher/k3s/platform-ca.crt
 
 log "Installing k3s ${K3S_VERSION}"
