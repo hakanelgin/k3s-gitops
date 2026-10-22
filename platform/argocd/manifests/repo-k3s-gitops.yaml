@@ -1,0 +1,13 @@
+# Registers this repo in Argo CD (Settings → Repositories).
+# The repo is public, so no credentials; this Secret holds no sensitive data.
+apiVersion: v1
+kind: Secret
+metadata:
+  name: repo-k3s-gitops
+  namespace: argocd
+  labels:
+    argocd.argoproj.io/secret-type: repository
+stringData:
+  type: git
+  name: k3s-gitops
+  url: https://github.com/hakanelgin/k3s-gitops.git
