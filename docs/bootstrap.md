@@ -6,7 +6,7 @@ existing `~/.kube/config` is not touched.
 
 1. **Host prep**: `./scripts/01-host-prep.sh`
    - firewalld: trusts 10.42.0.0/16 (pods) and 10.43.0.0/16 (services), opens 80/443/6443
-   - pins `argocd|keycloak|headlamp.localtest.me` to 127.0.0.1 in `/etc/hosts`
+   - pins `argocd|keycloak|headlamp|nginx.localtest.me` to 127.0.0.1 in `/etc/hosts`
      (some routers drop 127.0.0.1 DNS answers as rebinding protection)
    - creates the root CA in `~/.k3s-gitops/ca/` and adds it to the system trust store
    - installs `kubeseal`

@@ -22,7 +22,7 @@ log "Pinning *.localtest.me hostnames to 127.0.0.1 in /etc/hosts"
 sudo sed -i '/# k3s-gitops begin/,/# k3s-gitops end/d' /etc/hosts
 sudo tee -a /etc/hosts >/dev/null <<'EOF'
 # k3s-gitops begin
-127.0.0.1 argocd.localtest.me keycloak.localtest.me headlamp.localtest.me
+127.0.0.1 argocd.localtest.me keycloak.localtest.me headlamp.localtest.me nginx.localtest.me
 # k3s-gitops end
 EOF
 

@@ -10,7 +10,7 @@
 | -1 | cluster-config (ClusterIssuer, CA Bundle, CoreDNS rewrite, OIDC RBAC) |
 | 0 | postgresql (CNPG `Cluster` keycloak-db) |
 | 1 | keycloak (Keycloak CR, ingress, realm import) |
-| 3 | headlamp |
+| 3 | headlamp, nginx (demo welcome page) |
 
 Waves between Applications work because `argocd-cm` has a health check for
 `argoproj.io/Application` (see `platform/argocd/values.yaml`).

@@ -10,6 +10,7 @@ Single-node k3s managed with GitOps by Argo CD (app-of-apps).
 | CloudNativePG | PostgreSQL for Keycloak |
 | Keycloak Operator + Keycloak | SSO (realm `platform`) |
 | Headlamp | Kubernetes UI with OIDC login |
+| nginx | Demo app: default welcome page |
 
 ## Endpoints
 
@@ -18,6 +19,7 @@ Single-node k3s managed with GitOps by Argo CD (app-of-apps).
 | https://argocd.localtest.me | Keycloak SSO (or `admin` break-glass) |
 | https://keycloak.localtest.me | Keycloak admin: secret `keycloak/keycloak-initial-admin` |
 | https://headlamp.localtest.me | Keycloak SSO, Kubernetes RBAC via apiserver OIDC |
+| https://nginx.localtest.me | none (public welcome page) |
 
 Demo users (realm `platform`): `demo-admin` (group `platform-admins`) and
 `demo-viewer` (group `viewers`). Passwords: `~/.k3s-gitops/credentials.env`.
