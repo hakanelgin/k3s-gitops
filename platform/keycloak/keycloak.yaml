@@ -1,0 +1,26 @@
+apiVersion: k8s.keycloak.org/v2alpha1
+kind: Keycloak
+metadata:
+  name: keycloak
+  namespace: keycloak
+spec:
+  instances: 1
+  db:
+    vendor: postgres
+    host: keycloak-db-rw
+    database: keycloak
+    usernameSecret:
+      name: keycloak-db-app
+      key: username
+    passwordSecret:
+      name: keycloak-db-app
+      key: password
+  # TLS terminates at Traefik (ingress.yaml); Keycloak itself serves plain HTTP.
+  http:
+    httpEnabled: true
+  hostname:
+    hostname: https://keycloak.localtest.me
+  proxy:
+    headers: xforwarded
+  ingress:
+    enabled: false

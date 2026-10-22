@@ -1,0 +1,10 @@
+# Inside pods *.localtest.me would resolve to the pod itself (127.0.0.1).
+# Point it at Traefik instead, so the OIDC issuer URL is identical everywhere.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: coredns-custom
+  namespace: kube-system
+data:
+  localtest.override: |
+    rewrite name regex (.+)\.localtest\.me traefik.kube-system.svc.cluster.local answer auto

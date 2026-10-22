@@ -1,0 +1,6 @@
+# Never commit plain secrets or CA keys (they live in ~/.k3s-gitops)
+*.key
+*.pem
+credentials.env
+*-secret.yaml
+!*.sealed.yaml

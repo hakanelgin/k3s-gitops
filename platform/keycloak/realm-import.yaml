@@ -1,0 +1,93 @@
+# Realm "platform": groups, OIDC clients (argocd, headlamp) and demo users.
+# ${...} placeholders come from the sealed secret "realm-secrets".
+# Note: the operator only imports a realm that doesn't exist yet; later changes
+# to this file need the realm deleted (or edited in the Keycloak UI).
+apiVersion: k8s.keycloak.org/v2alpha1
+kind: KeycloakRealmImport
+metadata:
+  name: platform
+  namespace: keycloak
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  keycloakCRName: keycloak
+  placeholders:
+    ARGOCD_CLIENT_SECRET:
+      secret: {name: realm-secrets, key: ARGOCD_CLIENT_SECRET}
+    HEADLAMP_CLIENT_SECRET:
+      secret: {name: realm-secrets, key: HEADLAMP_CLIENT_SECRET}
+    DEMO_ADMIN_PASSWORD:
+      secret: {name: realm-secrets, key: DEMO_ADMIN_PASSWORD}
+    DEMO_VIEWER_PASSWORD:
+      secret: {name: realm-secrets, key: DEMO_VIEWER_PASSWORD}
+  realm:
+    realm: platform
+    displayName: Platform
+    enabled: true
+    sslRequired: external
+    groups:
+      - name: platform-admins
+      - name: viewers
+    clients:
+      - clientId: argocd
+        name: Argo CD
+        enabled: true
+        protocol: openid-connect
+        publicClient: false
+        clientAuthenticatorType: client-secret
+        secret: ${ARGOCD_CLIENT_SECRET}
+        standardFlowEnabled: true
+        directAccessGrantsEnabled: false
+        rootUrl: https://argocd.localtest.me
+        redirectUris:
+          - https://argocd.localtest.me/auth/callback
+          - http://localhost:8085/auth/callback  # argocd CLI --sso
+        webOrigins: [https://argocd.localtest.me]
+        attributes:
+          post.logout.redirect.uris: https://argocd.localtest.me/*
+        protocolMappers: &groupsMapper
+          - name: groups
+            protocol: openid-connect
+            protocolMapper: oidc-group-membership-mapper
+            config:
+              claim.name: groups
+              full.path: "false"
+              id.token.claim: "true"
+              access.token.claim: "true"
+              userinfo.token.claim: "true"
+      - clientId: headlamp
+        name: Headlamp
+        enabled: true
+        protocol: openid-connect
+        publicClient: false
+        clientAuthenticatorType: client-secret
+        secret: ${HEADLAMP_CLIENT_SECRET}
+        standardFlowEnabled: true
+        directAccessGrantsEnabled: false
+        rootUrl: https://headlamp.localtest.me
+        redirectUris: [https://headlamp.localtest.me/oidc-callback]
+        webOrigins: [https://headlamp.localtest.me]
+        protocolMappers: *groupsMapper
+    users:
+      - username: demo-admin
+        enabled: true
+        email: demo-admin@localtest.me
+        emailVerified: true
+        firstName: Demo
+        lastName: Admin
+        groups: [/platform-admins]
+        credentials:
+          - type: password
+            value: ${DEMO_ADMIN_PASSWORD}
+            temporary: false
+      - username: demo-viewer
+        enabled: true
+        email: demo-viewer@localtest.me
+        emailVerified: true
+        firstName: Demo
+        lastName: Viewer
+        groups: [/viewers]
+        credentials:
+          - type: password
+            value: ${DEMO_VIEWER_PASSWORD}
+            temporary: false

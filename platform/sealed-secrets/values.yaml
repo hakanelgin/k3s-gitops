@@ -1,0 +1,2 @@
+# Matches kubeseal's default --controller-name, see scripts/04-seal-secrets.sh
+fullnameOverride: sealed-secrets-controller

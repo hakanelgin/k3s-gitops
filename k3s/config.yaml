@@ -1,0 +1,14 @@
+# Copied to /etc/rancher/k3s/config.yaml by scripts/02-install-k3s.sh
+write-kubeconfig-mode: "0600"
+selinux: true
+
+# The apiserver trusts ID tokens issued by Keycloak for the "headlamp" client.
+# Users/groups get the "oidc:" prefix, see platform/cluster-config/oidc-rbac.yaml.
+kube-apiserver-arg:
+  - oidc-issuer-url=https://keycloak.localtest.me/realms/platform
+  - oidc-client-id=headlamp
+  - oidc-username-claim=preferred_username
+  - oidc-username-prefix=oidc:
+  - oidc-groups-claim=groups
+  - oidc-groups-prefix=oidc:
+  - oidc-ca-file=/etc/rancher/k3s/platform-ca.crt

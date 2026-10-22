@@ -1,0 +1,42 @@
+config:
+  oidc:
+    secret:
+      create: false
+    # headlamp-oidc is a SealedSecret in manifests/ (scripts/04-seal-secrets.sh)
+    externalSecret:
+      enabled: true
+      name: headlamp-oidc
+      hasScopes: true
+  extraArgs:
+    - -oidc-callback-url=https://headlamp.localtest.me/oidc-callback
+
+# Users act with their own OIDC identity (apiserver --oidc-*), not a shared SA.
+clusterRoleBinding:
+  create: false
+
+# Trust the platform CA when talking to Keycloak.
+env:
+  - name: SSL_CERT_FILE
+    value: /etc/ssl/platform/ca-bundle.crt
+volumes:
+  - name: platform-ca
+    configMap:
+      name: platform-ca-bundle
+volumeMounts:
+  - name: platform-ca
+    mountPath: /etc/ssl/platform
+    readOnly: true
+
+ingress:
+  enabled: true
+  ingressClassName: traefik
+  annotations:
+    cert-manager.io/cluster-issuer: platform-ca
+  hosts:
+    - host: headlamp.localtest.me
+      paths:
+        - path: /
+          type: Prefix
+  tls:
+    - secretName: headlamp-tls
+      hosts: [headlamp.localtest.me]

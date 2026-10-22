@@ -1,0 +1,16 @@
+# Keycloak database. CNPG generates the "keycloak-db-app" secret (username/password)
+# in this namespace, which the Keycloak CR uses directly - nothing to seal.
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: keycloak-db
+  namespace: keycloak
+spec:
+  instances: 1
+  storage:
+    storageClass: local-path
+    size: 2Gi
+  bootstrap:
+    initdb:
+      database: keycloak
+      owner: keycloak

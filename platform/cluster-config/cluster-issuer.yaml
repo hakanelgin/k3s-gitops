@@ -1,0 +1,9 @@
+# Signs every ingress certificate with the platform root CA
+# (secret cert-manager/platform-root-ca, created by scripts/03-bootstrap-argocd.sh).
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: platform-ca
+spec:
+  ca:
+    secretName: platform-root-ca

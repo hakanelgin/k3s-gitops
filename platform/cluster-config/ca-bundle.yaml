@@ -1,0 +1,15 @@
+# Publishes ConfigMap "platform-ca-bundle" (system roots + platform CA) to every
+# namespace. Pods use it via SSL_CERT_FILE to trust https://*.localtest.me.
+apiVersion: trust.cert-manager.io/v1alpha1
+kind: Bundle
+metadata:
+  name: platform-ca-bundle
+spec:
+  sources:
+    - useDefaultCAs: true
+    - secret:
+        name: platform-root-ca
+        key: tls.crt
+  target:
+    configMap:
+      key: ca-bundle.crt

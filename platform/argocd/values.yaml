@@ -1,0 +1,61 @@
+# Used both by scripts/03-bootstrap-argocd.sh (helm install) and apps/argocd.yaml (self-management).
+global:
+  domain: argocd.localtest.me
+
+dex:
+  enabled: false
+
+configs:
+  params:
+    server.insecure: true  # TLS terminates at Traefik
+
+  cm:
+    url: https://argocd.localtest.me
+    admin.enabled: true  # break-glass login
+    oidc.config: |
+      name: Keycloak
+      issuer: https://keycloak.localtest.me/realms/platform
+      clientID: argocd
+      clientSecret: $argocd-oidc:clientSecret
+      requestedScopes: ["openid", "profile", "email"]
+    # Child Applications report real health so sync waves in apps/ wait for each other.
+    resource.customizations.health.argoproj.io_Application: |
+      hs = {}
+      hs.status = "Progressing"
+      hs.message = ""
+      if obj.status ~= nil and obj.status.health ~= nil then
+        hs.status = obj.status.health.status
+        if obj.status.health.message ~= nil then
+          hs.message = obj.status.health.message
+        end
+      end
+      return hs
+
+  rbac:
+    policy.default: ""
+    scopes: "[groups]"
+    policy.csv: |
+      g, platform-admins, role:admin
+      g, viewers, role:readonly
+
+server:
+  # CA bundle from trust-manager (system roots + platform CA), so argocd-server
+  # trusts https://keycloak.localtest.me. Optional: absent during bootstrap.
+  env:
+    - name: SSL_CERT_FILE
+      value: /etc/ssl/platform/ca-bundle.crt
+  volumes:
+    - name: platform-ca
+      configMap:
+        name: platform-ca-bundle
+        optional: true
+  volumeMounts:
+    - name: platform-ca
+      mountPath: /etc/ssl/platform
+      readOnly: true
+  ingress:
+    enabled: true
+    ingressClassName: traefik
+    annotations:
+      cert-manager.io/cluster-issuer: platform-ca
+    tls: true

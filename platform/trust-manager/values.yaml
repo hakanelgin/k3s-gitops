@@ -1,0 +1,3 @@
+app:
+  trust:
+    namespace: cert-manager  # where the platform-root-ca secret lives
