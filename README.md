@@ -10,7 +10,7 @@ Single-node k3s managed with GitOps by Argo CD (app-of-apps).
 | CloudNativePG | PostgreSQL for Keycloak |
 | Keycloak Operator + Keycloak | SSO (realm `platform`) |
 | Headlamp | Kubernetes UI with OIDC login |
-| nginx | Demo app: default welcome page |
+| nginx | Demo app: welcome page from a ConfigMap (`platform/nginx/index.html`) |
 
 ## Endpoints
 

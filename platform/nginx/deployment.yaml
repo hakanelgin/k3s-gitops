@@ -1,4 +1,4 @@
-# Demo app: stock nginx serving its default welcome page.
+# Demo app: nginx serving index.html from the nginx-index ConfigMap.
 # The unprivileged image runs as non-root and listens on 8080.
 apiVersion: apps/v1
 kind: Deployment
@@ -35,6 +35,15 @@ spec:
             allowPrivilegeEscalation: false
             capabilities:
               drop: [ALL]
+          volumeMounts:
+            - name: index
+              mountPath: /usr/share/nginx/html/index.html
+              subPath: index.html
+              readOnly: true
+      volumes:
+        - name: index
+          configMap:
+            name: nginx-index
 ---
 apiVersion: v1
 kind: Service
