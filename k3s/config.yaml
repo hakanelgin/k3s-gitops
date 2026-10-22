@@ -8,7 +8,7 @@ kube-apiserver-arg:
   - oidc-issuer-url=https://keycloak.localtest.me/realms/platform
   - oidc-client-id=headlamp
   - oidc-username-claim=preferred_username
-  - oidc-username-prefix=oidc:
+  - "oidc-username-prefix=oidc:"
   - oidc-groups-claim=groups
-  - oidc-groups-prefix=oidc:
+  - "oidc-groups-prefix=oidc:"
   - oidc-ca-file=/etc/rancher/k3s/platform-ca.crt
